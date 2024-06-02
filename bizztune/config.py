@@ -2,6 +2,11 @@ from pathlib import Path
 
 DATA_DIR = Path('data/')
 
+DATA = {
+    'instruction_dataset': DATA_DIR / 'instruction_dataset.jsonl',
+    'benchmark': DATA_DIR / 'benchmark.json',
+}
+
 SEED = 42
 
 category_dict = {
@@ -193,6 +198,14 @@ Generate a dataset with {n_samples} diverse and realistic examples for the subca
 Here is an example output for a dataset of length 1:\n\n
 
 {example}
+"""
+
+benchmark_prompt_template = """
+You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Below is a formatted support ticket followed by the categories and subcategories it can belong to. Your task is to determine the most appropriate category and subcategory for the ticket.
+
+{ticket}
+
+The possible categories and subcategories are as follows:
 """
 
 DATA_CONFIG = {
