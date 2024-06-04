@@ -3,7 +3,7 @@ Fine-tune small foundational LLM on typical large enterprise use-case and compar
 
 # Overview 
 What has been done so far:
-- Let GPT3.5 create a dataset of arbitrary size. Right now the dataset contains examples of support tickets raised by customers of a middle-sized German electronics company (see bizztune/config.py). The label (ground truth) for each ticket is the category and subcategory of the ticket. The dataset is in German. Here is an example:
+- Let GPT3.5 create a dataset of arbitrary size. Right now the dataset contains examples of support tickets raised by customers of a middle-sized German electronics company (see bizztune/config.py). The label (ground truth) for each ticket is the category and subcategory of the ticket. The dataset is in German. Here is an example:<br>
 "input": {<br>
     "title": "Verspätete Lieferung",<br>
     "description": "Meine Bestellung sollte vor einer Woche ankommen, aber sie ist immer noch nicht da. Können Sie den Lieferstatus überprüfen? Meine Bestellnummer ist 54321.",<br>
