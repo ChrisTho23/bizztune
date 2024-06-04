@@ -65,7 +65,7 @@ poetry install
 ```
 
 Set up the environment variables:
-Create a .env file in the root directory and add your API keys for Mistral and OpenAI-
+Create a .env file in the root directory and add your API keys for Mistral and OpenAI.
 ```bash
 MISTRAL_API_KEY=your_mistral_api_key
 OPENAI_API_KEY=your_openai_api_key
