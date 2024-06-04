@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langfuse.openai import openai
 import logging
 
-from bizztune.config import DATA_CONFIG, DATA_DIR
+from bizztune.config import DATA_CONFIG, DATA
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,7 +20,7 @@ def create_instruction_dataset(model_name: str, prompt: str, tools: dict, functi
             messages=[
                 {"role": "system", "content": prompt},
             ],
-            logit_bias = {1734:-100},
+            logit_bias = {1734:-100}, # prevention of \n in JSON
             response_format= { "type" : "json_object" }, 
             tools=tools,
             tool_choice={"type": "function", "function": {"name": function_name}},
@@ -35,7 +35,7 @@ def create_instruction_dataset(model_name: str, prompt: str, tools: dict, functi
 def main():
     logging.info("Creating instruction dataset...")
 
-    output_path = DATA_DIR / "instruction_dataset.jsonl"
+    output_path = DATA['instruction_dataset']
     # clear output file
     with open(output_path, 'w') as _:
         pass
