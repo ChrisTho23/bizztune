@@ -4,17 +4,19 @@ Fine-tune small foundational LLM on typical large enterprise use-case and compar
 # Overview 
 What has been done so far:
 - Let GPT3.5 create a dataset of arbitrary size. Right now the dataset contains examples of support tickets raised by customers of a middle-sized German electronics company (see bizztune/config.py). The label (ground truth) for each ticket is the category and subcategory of the ticket. The dataset is in German. Here is an example:<br>
-"input": {<br>
-    "title": "Verspätete Lieferung",<br>
-    "description": "Meine Bestellung sollte vor einer Woche ankommen, aber sie ist immer noch nicht da. Können Sie den Lieferstatus überprüfen? Meine Bestellnummer ist 54321.",<br>
-    "name": "Michael König",<br>
-    "date": "2024-05-26",<br>
-    "urgency": "Mittel"<br>
-},<br>
-"output": {<br>
+```json
+"input": {
+    "title": "Verspätete Lieferung",
+    "description": "Meine Bestellung sollte vor einer Woche ankommen, aber sie ist immer noch nicht da. Können Sie den Lieferstatus überprüfen? Meine Bestellnummer ist 54321.",
+    "name": "Michael König",
+    "date": "2024-05-26",
+    "urgency": "Mittel"
+},
+"output": {
     "category": "Bestellverwaltung",<br>
     "subcategory": "Lieferverzögerungen"<br>
-}<br>
+}
+```
 - Let Mistral 7B and chatGPT3.5 infer the category and the subcategory of each example in the dataset. On the current dataset the models score as follows:
 ### Accuracy Comparison
 | Model            | Category Accuracy | Subcategory Accuracy |
