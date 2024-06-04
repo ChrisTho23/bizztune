@@ -13,8 +13,8 @@ What has been done so far:
     "urgency": "Mittel"
 },
 "output": {
-    "category": "Bestellverwaltung",<br>
-    "subcategory": "Lieferverzögerungen"<br>
+    "category": "Bestellverwaltung",
+    "subcategory": "Lieferverzögerungen"
 }
 ```
 - Let Mistral 7B and chatGPT3.5 infer the category and the subcategory of each example in the dataset. On the current dataset the models score as follows:
