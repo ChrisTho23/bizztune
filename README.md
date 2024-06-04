@@ -1,5 +1,5 @@
 # BizzTune
-Fine-tune small foundational LLM on typical large enterprise use-case and compare results with pre-trained and large scale models. Instruction dataset will be generated artificially with a SOTA LLM.
+Fine-tune small foundational LLM on typical large enterprise use-case and compare results with pre-trained and large scale models. Instruction dataset will be generated artificially with a large scale LLM.
 
 # Overview 
 What has been done so far:
