@@ -55,19 +55,17 @@ What has been done so far:
 ## Setting Up the Project
 Clone the repository:
 ```bash
-Copy code
 git clone https://github.com/ChrisTho23/bizztune.git
 cd bizztune
 ```
 
 Install dependencies using Poetry:
 ```bash
-Copy code
 poetry install
-Set up the environment variables:
 ```
 
-Create a .env file in the root directory and add your API keys for Mistral and OpenAI:
+Set up the environment variables:
+Create a .env file in the root directory and add your API keys for Mistral and OpenAI-
 ```bash
 MISTRAL_API_KEY=your_mistral_api_key
 OPENAI_API_KEY=your_openai_api_key
