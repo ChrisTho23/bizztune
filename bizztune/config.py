@@ -5,6 +5,7 @@ DATA_DIR = Path('data/')
 DATA = {
     'instruction_dataset': DATA_DIR / 'instruction_dataset.jsonl',
     'benchmark': DATA_DIR / 'benchmark.json',
+    'results': DATA_DIR / 'results.json'
 }
 
 SEED = 42
@@ -15,14 +16,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Probleme beim Einrichten meines neuen Smartphones", 
-                    "description": "Ich habe kürzlich das SmartX Pro Smartphone gekauft, aber ich habe Schwierigkeiten, es einzurichten. Das Telefon erkennt mein WLAN-Netzwerk nicht. Können Sie mir helfen, es zu verbinden?", 
-                    "name": "Hans Müller", 
-                    "date": "2024-05-20", 
-                    "urgency": "Hoch"
+                    "description": "Ich habe kürzlich das SmartX Pro Smartphone gekauft, aber ich habe Schwierigkeiten, es einzurichten. Das Telefon erkennt mein WLAN-Netzwerk nicht. Es zeigt immer wieder die Fehlermeldung 'Authentifizierungsproblem'. Ich habe es bereits neu gestartet und die Netzwerkeinstellungen zurückgesetzt, aber das Problem bleibt bestehen. Können Sie mir helfen, es zu verbinden?", 
+                    "user": "Hans Müller", 
+                    "date": "2024-05-20"
                 },
                 "output": {
                     "category": "Technischer Support",
-                    "subcategory": "Geräte-Setup-Probleme"
+                    "subcategory": "Geräte-Setup-Probleme",
+                    "urgency": "Hoch"
                 }
             }"""
         },
@@ -30,14 +31,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "App stürzt immer ab", 
-                    "description": "Die neue SmartHome App stürzt jedes Mal ab, wenn ich versuche, mein Gerät hinzuzufügen. Können Sie das bitte beheben?", 
-                    "name": "Julia Schmidt", 
-                    "date": "2024-05-21", 
-                    "urgency": "Mittel"
+                    "description": "Die neue SmartHome App stürzt jedes Mal ab, wenn ich versuche, mein Gerät hinzuzufügen. Ich habe die App bereits deinstalliert und neu installiert, aber das Problem besteht weiterhin. Die Abstürze treten auf, sobald ich auf die Schaltfläche 'Gerät hinzufügen' klicke. Im Error-Log steht 'NullPointerException in line 45'. Können Sie das bitte beheben?", 
+                    "user": "Julia Schmidt", 
+                    "date": "2024-05-21"
                 },
                 "output": {
                     "category": "Technischer Support",
-                    "subcategory": "Softwarefehler"
+                    "subcategory": "Softwarefehler",
+                    "urgency": "Mittel"
                 }
             }"""
         }
@@ -47,14 +48,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Zahlung wurde nicht verarbeitet", 
-                    "description": "Ich habe versucht, für meine Bestellung mit der Nummer 98765 zu bezahlen, aber die Zahlung wurde nicht verarbeitet. Es erscheint immer eine Fehlermeldung. Können Sie mir bitte helfen?", 
-                    "name": "Klara Schmidt", 
-                    "date": "2024-05-21", 
-                    "urgency": "Mittel"
+                    "description": "Ich habe versucht, für meine Bestellung mit der Nummer 98765 zu bezahlen, aber die Zahlung wurde nicht verarbeitet. Es erscheint immer eine Fehlermeldung 'Transaktion fehlgeschlagen'. Ich habe es mit verschiedenen Kreditkarten und auch PayPal versucht, aber nichts funktioniert. Können Sie bitte den Zahlungsprozess überprüfen und mir sagen, was ich tun soll?", 
+                    "user": "Klara Schmidt", 
+                    "date": "2024-05-21"
                 },
                 "output": {
                     "category": "Abrechnung und Zahlungen",
-                    "subcategory": "Zahlungsprobleme"
+                    "subcategory": "Zahlungsprobleme",
+                    "urgency": "Mittel"
                 }
             }"""
         },
@@ -62,14 +63,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Rückerstattung für beschädigtes Produkt", 
-                    "description": "Ich habe vor zwei Wochen eine SmartHome Kamera bestellt, aber sie kam beschädigt an. Ich möchte eine vollständige Rückerstattung für dieses Produkt beantragen. Meine Bestellnummer ist 12345.", 
-                    "name": "Peter Becker", 
-                    "date": "2024-05-22", 
-                    "urgency": "Hoch"
+                    "description": "Ich habe vor zwei Wochen eine SmartHome Kamera bestellt, aber sie kam beschädigt an. Die Linse ist zerkratzt und das Gerät lässt sich nicht einschalten. Ich möchte eine vollständige Rückerstattung für dieses Produkt beantragen. Meine Bestellnummer ist 12345. Ich habe bereits versucht, den Kundendienst telefonisch zu erreichen, aber ohne Erfolg. Können Sie mir bitte helfen?", 
+                    "user": "Peter Becker", 
+                    "date": "2024-05-22"
                 },
                 "output": {
                     "category": "Abrechnung und Zahlungen",
-                    "subcategory": "Rückerstattungsanfragen"
+                    "subcategory": "Rückerstattungsanfragen",
+                    "urgency": "Hoch"
                 }
             }"""
         }
@@ -79,14 +80,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Frage zu den Produktspezifikationen des neuen Laptops", 
-                    "description": "Könnten Sie mir bitte die technischen Spezifikationen des neuen UltraBook X Laptops zusenden? Besonders interessiert mich der Arbeitsspeicher und die Akkulaufzeit.", 
-                    "name": "Lena Fischer", 
-                    "date": "2024-05-23", 
-                    "urgency": "Niedrig"
+                    "description": "Könnten Sie mir bitte die technischen Spezifikationen des neuen UltraBook X Laptops zusenden? Besonders interessiert mich der Arbeitsspeicher, die Akkulaufzeit und ob der Laptop über eine dedizierte Grafikkarte verfügt. Zusätzlich möchte ich wissen, ob das Gerät Thunderbolt 4 unterstützt und ob es eine Option für eine erweiterte Garantie gibt.", 
+                    "user": "Lena Fischer", 
+                    "date": "2024-05-23"
                 },
                 "output": {
                     "category": "Produktinformationen",
-                    "subcategory": "Produktspezifikationen"
+                    "subcategory": "Produktspezifikationen",
+                    "urgency": "Niedrig"
                 }
             }"""
         },
@@ -94,14 +95,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Garantieinformationen für SmartHome Hub", 
-                    "description": "Ich überlege, den SmartHome Hub zu kaufen und möchte mehr über die Garantieabdeckung wissen. Wie lange ist die Garantiezeit und was deckt sie ab?", 
-                    "name": "Markus Weber", 
-                    "date": "2024-05-24", 
-                    "urgency": "Niedrig"
+                    "description": "Ich überlege, den SmartHome Hub zu kaufen und möchte mehr über die Garantieabdeckung wissen. Wie lange ist die Garantiezeit und was deckt sie ab? Deckt die Garantie auch Schäden durch Überspannung oder nur Produktionsfehler? Gibt es eine Möglichkeit, die Garantiezeit gegen Aufpreis zu verlängern? Vielen Dank im Voraus für Ihre Hilfe.", 
+                    "user": "Markus Weber", 
+                    "date": "2024-05-24"
                 },
                 "output": {
                     "category": "Produktinformationen",
-                    "subcategory": "Garantieinformationen"
+                    "subcategory": "Garantieinformationen",
+                    "urgency": "Niedrig"
                 }
             }"""
         }
@@ -111,14 +112,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Wo ist meine Bestellung?", 
-                    "description": "Ich habe vor drei Wochen eine Bestellung aufgegeben und sie ist noch nicht angekommen. Können Sie mir bitte ein Update zum Lieferstatus geben? Meine Bestellnummer ist 67890.", 
-                    "name": "Anna Bauer", 
-                    "date": "2024-05-25", 
-                    "urgency": "Hoch"
+                    "description": "Ich habe vor drei Wochen eine Bestellung aufgegeben und sie ist noch nicht angekommen. Können Sie mir bitte ein Update zum Lieferstatus geben? Meine Bestellnummer ist 67890. Ich habe bereits den Versandstatus auf Ihrer Website überprüft, aber es gibt keine neuen Informationen. Der Status steht seit zwei Wochen auf 'In Bearbeitung'. Können Sie bitte den aktuellen Status für mich prüfen?", 
+                    "user": "Anna Bauer", 
+                    "date": "2024-05-25"
                 },
                 "output": {
                     "category": "Bestellverwaltung",
-                    "subcategory": "Bestellverfolgung"
+                    "subcategory": "Bestellverfolgung",
+                    "urgency": "Hoch"
                 }
             }"""
         },
@@ -126,14 +127,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Verspätete Lieferung", 
-                    "description": "Meine Bestellung sollte vor einer Woche ankommen, aber sie ist immer noch nicht da. Können Sie den Lieferstatus überprüfen? Meine Bestellnummer ist 54321.", 
-                    "name": "Michael König", 
-                    "date": "2024-05-26", 
-                    "urgency": "Mittel"
+                    "description": "Meine Bestellung sollte vor einer Woche ankommen, aber sie ist immer noch nicht da. Können Sie den Lieferstatus überprüfen? Meine Bestellnummer ist 54321. Ich habe die Lieferung für ein wichtiges Projekt benötigt und die Verzögerung verursacht mir ernsthafte Probleme. Können Sie mir mitteilen, wann ich mit der Lieferung rechnen kann und ob es möglich ist, eine Entschädigung für die Verzögerung zu erhalten?", 
+                    "user": "Michael König", 
+                    "date": "2024-05-26"
                 },
                 "output": {
                     "category": "Bestellverwaltung",
-                    "subcategory": "Lieferverzögerungen"
+                    "subcategory": "Lieferverzögerungen",
+                    "urgency": "Mittel"
                 }
             }"""
         }
@@ -143,14 +144,14 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Frage zu Unternehmensrichtlinien", 
-                    "description": "Könnten Sie mir bitte Informationen zu Ihren Rückgabebedingungen und Ihrer Datenschutzrichtlinie zukommen lassen?", 
-                    "name": "Sabine Hoffmann", 
-                    "date": "2024-05-27", 
-                    "urgency": "Niedrig"
+                    "description": "Könnten Sie mir bitte Informationen zu Ihren Rückgabebedingungen und Ihrer Datenschutzrichtlinie zukommen lassen? Ich habe kürzlich ein Produkt gekauft, das nicht meinen Erwartungen entspricht, und möchte es zurücksenden. Zusätzlich würde ich gerne wissen, wie meine persönlichen Daten verarbeitet und gespeichert werden.", 
+                    "user": "Sabine Hoffmann", 
+                    "date": "2024-05-27"
                 },
                 "output": {
                     "category": "Allgemeine Anfragen",
-                    "subcategory": "Unternehmensrichtlinien"
+                    "subcategory": "Unternehmensrichtlinien",
+                    "urgency": "Niedrig"
                 }
             }"""
         },
@@ -158,14 +159,31 @@ category_dict = {
             "example": """{
                 "input": {
                     "title": "Feedback zur SmartHome App", 
-                    "description": "Ich finde die neue SmartHome App sehr nützlich, aber ich habe einige Verbesserungsvorschläge. Es wäre großartig, wenn die App auch auf Tablets optimiert wäre.", 
-                    "name": "Thomas Wagner", 
-                    "date": "2024-05-28", 
-                    "urgency": "Niedrig"
+                    "description": "Ich finde die neue SmartHome App sehr nützlich, aber ich habe einige Verbesserungsvorschläge. Es wäre großartig, wenn die App auch auf Tablets optimiert wäre. Zudem wäre eine Integration mit Sprachassistenten wie Alexa und Google Assistant sehr hilfreich. Könnten Sie diese Funktionen in zukünftigen Updates berücksichtigen?", 
+                    "user": "Thomas Wagner", 
+                    "date": "2024-05-28"
                 },
                 "output": {
                     "category": "Allgemeine Anfragen",
-                    "subcategory": "Feedback und Vorschläge"
+                    "subcategory": "Feedback und Vorschläge",
+                    "urgency": "Niedrig"
+                }
+            }"""
+        }
+    },
+    "Ungewiss": {
+        "Kein Zusammenhang": {
+            "example": """{
+                "input": {
+                    "title": "Frage zur Büroausstattung", 
+                    "description": "Ich habe eine Frage zur Ausstattung Ihres Büros. Welche Art von Schreibtischen verwenden Sie? Sind sie höhenverstellbar? Haben Sie Empfehlungen für ergonomische Bürostühle? Ich plane, mein Homeoffice auszustatten und suche nach guten Empfehlungen.", 
+                    "user": "Erik Braun", 
+                    "date": "2024-05-29"
+                },
+                "output": {
+                    "category": "Ungewiss",
+                    "subcategory": "Kein Zusammenhang",
+                    "urgency": "Niedrig"
                 }
             }"""
         }
@@ -192,7 +210,7 @@ The **input** field is a JSON object with the fields:
 The **output** field is a JSON object with the fields:
 - **category**: {category}
 - **subcategory**: {subcategory}
-- **urgency**: The urgency of the ticket (High, Medium, or Low)
+- **urgency**: The urgency of the ticket (Hoch, Mittel, or Niedrig)
 
 Ensure to include examples with varying complexity, using technical jargon where appropriate.
 
@@ -203,18 +221,25 @@ Here is an example output for a dataset of length 1:
 {example}
 """
 
-benchmark_prompt_template = """
-You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Below is a formatted support ticket followed by the categories and subcategories it can belong to. Your task is to determine the most appropriate category and subcategory for the ticket.
-
-{ticket}
-
-The possible categories and subcategories are as follows:
-"""
-
 DATA_CONFIG = {
     'model_name': 'gpt-4o',
     'prompt': dataset_prompt_template,
     'category_dict': category_dict,
     'seed': SEED,
     'n_samples': 10
+}
+
+benchmark_prompt_template = """
+You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Below is a formatted support ticket followed by the categories and subcategories it can belong to. Your task is to determine the most appropriate category and subcategory for the ticket, and also classify the urgency of the ticket.
+
+{ticket}
+
+The possible categories, subcategories, and urgency levels are as follows:
+"""
+
+BENCHMARK_CONFIG = {
+    'model_mistral': ['mistral-small-latest'],
+    'model_gpt': ['gpt-3.5-turbo', 'gpt-4o'],
+    'prompt': benchmark_prompt_template,
+    'category_dict': category_dict
 }
