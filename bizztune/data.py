@@ -1,6 +1,7 @@
 import json
 from dotenv import load_dotenv
 from langfuse.openai import openai
+import asyncio
 import logging
 
 from bizztune.config import DATA_CONFIG, DATA
@@ -13,7 +14,7 @@ load_dotenv()
 # set model
 model_name = DATA_CONFIG['model_name']
 
-def create_instruction_dataset(model_name: str, prompt: str, tools: dict, function_name: str, seed: int):
+def create_instruction_dataset(model_name: str, prompt: str, seed: int):
     try:
         completion = openai.chat.completions.create(
             model=model_name,
@@ -22,11 +23,9 @@ def create_instruction_dataset(model_name: str, prompt: str, tools: dict, functi
             ],
             logit_bias = {1734:-100}, # prevention of \n in JSON
             response_format= { "type" : "json_object" }, 
-            tools=tools,
-            tool_choice={"type": "function", "function": {"name": function_name}},
             seed=seed
         )
-        return json.loads(completion.choices[0].message.tool_calls[0].function.arguments)
+        return json.loads(completion.choices[0].message.content)
     except Exception as e:
         print("Unable to generate ChatCompletion response")
         print(f"Exception: {e}")
@@ -52,9 +51,7 @@ def main():
             )
             subcategory_dataset = create_instruction_dataset(
                 model_name=model_name, 
-                prompt=prompt, 
-                tools=DATA_CONFIG['tools'], 
-                function_name="create_dataset",
+                prompt=prompt,
                 seed=DATA_CONFIG['seed']
             )
             print(subcategory_dataset)
