@@ -5,6 +5,7 @@ DATA_DIR = Path('data/')
 DATA = {
     'instruction_dataset': DATA_DIR / 'instruction_dataset.jsonl',
     'benchmark': DATA_DIR / 'benchmark.json',
+    'results': DATA_DIR / 'results.json'
 }
 
 SEED = 42
