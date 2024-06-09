@@ -1,6 +1,16 @@
 def accuracy_score(targets, predictions):
     if len(targets) != len(predictions):
         raise ValueError("List and targets must have the same length")
+    
+    if targets[0].keys() != predictions[0].keys():
+        raise ValueError(
+            f"Keys in targets ({targets[0].keys()}) and predictions ({predictions[0].keys()}) must be the same"
+        )
+
+    if not all(isinstance(item, dict) for item in targets):
+        raise ValueError("All elements in targets must be dictionaries")
+    if not all(isinstance(item, dict) for item in predictions):
+        raise ValueError("All elements in predictions must be dictionaries")
 
     keys = targets[0].keys()
     position_counts = {key: 0 for key in keys}
@@ -8,10 +18,11 @@ def accuracy_score(targets, predictions):
 
     for target, prediction in zip(targets, predictions):
         for key in keys:
+            print(key, target[key], prediction[key])
             if target[key] == prediction[key]:
                 position_counts[key] += 1
 
-    accuracies = {key: count / total_counts for key, count in position_counts.items()}
+    accuracies = {key: round(count / total_counts, 2) for key, count in position_counts.items()}
     return accuracies
 
 def format_ticket(ticket, hide_output=False):
