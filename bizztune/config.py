@@ -1,4 +1,5 @@
 from pathlib import Path
+import torch
 
 DATA_DIR = Path('data/')
 
@@ -190,8 +191,7 @@ category_dict = {
     }
 }
 
-dataset_prompt_template = """
-You are an AI engineer at a German consumer electronics company. To train an LLM to automatically categorize incoming customer support tickets, you have to train it on a dataset of representative examples of support tickets. Generate {n_samples} examples of a specific category for this dataset.
+dataset_prompt_template = """You are an AI engineer at a German consumer electronics company. To train an LLM to automatically categorize incoming customer support tickets, you have to train it on a dataset of representative examples of support tickets. Generate {n_samples} examples of a specific category for this dataset.
 
 Here is some context:
 - **Industry**: Consumer Electronics
@@ -229,17 +229,36 @@ DATA_CONFIG = {
     'n_samples': 10
 }
 
-benchmark_prompt_template = """
-You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Below is a formatted support ticket followed by the categories and subcategories it can belong to. Your task is to determine the most appropriate category and subcategory for the ticket, and also classify the urgency of the ticket.
+benchmark_prompt_template = """@LSTCM
+You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Your task is to determine the most appropriate category and subcategory for the support ticket provided below, and also classify the urgency of the ticket.
 
-{ticket}
+Provide the result in a JSON format with the following fields:
+- **category**: The main category of the ticket
+- **subcategory**: The subcategory of the ticket
+- **urgency**: The urgency level of the ticket
 
 The possible categories, subcategories, and urgency levels are as follows:
 """
 
 BENCHMARK_CONFIG = {
-    'model_mistral': ['mistral-small-latest'],
+    'model_mistral': ['open-mistral-7b'],
     'model_gpt': ['gpt-3.5-turbo', 'gpt-4o'],
     'prompt': benchmark_prompt_template,
     'category_dict': category_dict
+}
+
+FINETUNE_CONFIG = {
+    'prompt': benchmark_prompt_template,
+    'category_dict': category_dict,
+    'test_size': 0.1,
+    'val_size': 0.1,
+    'base_model': 'mistralai/Mistral-7B-Instruct-v0.3',
+    'tuned_model': 'LSTCM'
+}
+
+BNB_CONFIG = {
+    "load_in_4bit": True,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_compute_dtype": torch.bfloat16,
+    "bnb_4bit_use_double_quant": False,
 }
