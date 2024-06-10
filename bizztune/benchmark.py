@@ -6,53 +6,41 @@ from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
 from typing import List
 
-from bizztune.config import DATA, BENCHMARK_CONFIG, category_dict, SEED
-from bizztune.utils import format_ticket, accuracy_score
+from bizztune.config import DATA, BENCHMARK_CONFIG, SEED, category_dict
+from bizztune.utils import accuracy_score, create_prompt
 
 logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
 mistral_client = MistralClient()
+openai_client = openai.OpenAI()
 
 def invoke_mistral(messages: List, model: str):
     messages = [ChatMessage(role=message["role"], content=message["content"]) for message in messages]
-    chat_response = mistral_client.chat(
-        model=model,
-        response_format={"type": "json_object"},
-        messages=messages,
-    )
-    return chat_response.choices[0].message.content
+    try:
+        chat_response = mistral_client.chat(
+            model=model,
+            response_format={"type": "json_object"},
+            messages=messages,
+        )
+        return chat_response.choices[0].message.content
+    except Exception as e:
+        logging.error(f"Error invoking Mistral: {e}")
+        return e
 
 def invoke_gpt(messages: List, model: str):
-    completion = openai.chat.completions.create(
-        model=model,
-        messages=messages,
-        response_format= { "type" : "json_object" },
-        seed=SEED
-    )
-    return completion.choices[0].message.content
-
-def create_prompt(prompt_template, formatted_ticket, category_dict):
-    prompt = prompt_template.format(ticket=formatted_ticket)
-
-    prompt += "\n**Categories and subcategories**:"
-    for category, subcategories in category_dict.items():
-        prompt += f"\n**{category}**\n"
-        for subcategory in subcategories.keys():
-            prompt += f"- {subcategory}\n"
-
-    prompt += """\n**Urgency Levels**:
-    - Hoch
-    - Mittel
-    - Niedrig"""
-
-    prompt += "\n======================\n"
-
-    prompt += "\nBased on the ticket above, please provide the category, subcategory, and urgency of the support ticket in the following JSON format:\n"
-    prompt += '{\n  "category": "CATEGORY_NAME",\n  "subcategory": "SUBCATEGORY_NAME",\n  "urgency": "URGENCY_LEVEL"\n}'
-
-    return prompt
+    try:
+        completion = openai_client.chat.completions.create(
+            model=model,
+            messages=messages,
+            response_format= { "type" : "json_object" },
+            seed=SEED
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        logging.error(f"Error invoking GPT: {e}")
+        return e
 
 def evaluate_model(prompt_template, category_dict, model_mistral, model_gpt):
     logging.info("Evaluating model...")
@@ -65,28 +53,22 @@ def evaluate_model(prompt_template, category_dict, model_mistral, model_gpt):
         for i, line in enumerate(file):
             logging.info(f"Evaluating ticket {i}") if i % 10 == 0 else None
             ticket = json.loads(line)
-            formatted_ticket = format_ticket(ticket, hide_output=True)
+            
             prompt = create_prompt(
-                prompt_template=prompt_template, 
-                formatted_ticket=formatted_ticket, 
+                ticket=ticket['input'],
+                prompt_template=prompt_template,
                 category_dict=category_dict
             )
-            messages = [{"role": "system", "content": prompt}]
+            messages = [
+                {"role": "system", "content": prompt},
+            ]
 
-            try:
-                for model in model_mistral:
-                    result_mistral = invoke_mistral(messages, model)
-                    results["mistral"][model].append(json.loads(result_mistral))
-            except Exception as e:
-                logging.error(f"Error for result {result_mistral}: {e}")
-                continue
-            try:
-                for model in model_gpt:
-                    result_gpt = invoke_gpt(messages, model)
-                    results["gpt"][model].append(json.loads(result_gpt))
-            except Exception as e:
-                logging.error(f"Error for result {result_gpt}: {e}")
-                continue
+            for model in model_mistral:
+                result_mistral = invoke_mistral(messages, model)
+                results["mistral"][model].append(json.loads(result_mistral))
+            for model in model_gpt:
+                result_gpt = invoke_gpt(messages, model)
+                results["gpt"][model].append(json.loads(result_gpt))
         
             results["ground_truth"].append(ticket['output'])
 
@@ -119,15 +101,14 @@ def get_accuracy(model_mistral, model_gpt):
         
 def main():
     logging.info("Benchmarking dataset...")
-    '''evaluate_model(
+    evaluate_model(
         prompt_template=BENCHMARK_CONFIG["prompt"], 
         category_dict=category_dict,
         model_mistral=BENCHMARK_CONFIG["model_mistral"],
         model_gpt=BENCHMARK_CONFIG["model_gpt"]
-    )'''
+    )
     get_accuracy(
         model_mistral=BENCHMARK_CONFIG["model_mistral"],
         model_gpt=BENCHMARK_CONFIG["model_gpt"]
     )
     logging.info("Benchmarking complete.")
-
