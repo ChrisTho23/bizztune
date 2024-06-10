@@ -208,9 +208,9 @@ The **input** field is a JSON object with the fields:
 - **date**: The date of the ticket submission in YYYY-MM-DD format
 
 The **output** field is a JSON object with the fields:
-- **category**: {category}
-- **subcategory**: {subcategory}
-- **urgency**: The urgency of the ticket (Hoch, Mittel, or Niedrig)
+- **category**: The main category of the ticket
+- **subcategory**: The subcategory of the ticket
+- **urgency**: The urgency level of the ticket (Niedrig, Mittel, Hoch)
 
 Ensure to include examples with varying complexity, using technical jargon where appropriate.
 
