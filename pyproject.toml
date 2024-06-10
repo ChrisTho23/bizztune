@@ -6,13 +6,16 @@ authors = ["ChrisTho23 <christophe.thomassin23@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-langchain = "^0.2.1"
+python = ">=3.9,<3.11"
 langfuse = "^2.33.1"
 openai = "^1.30.5"
 python-dotenv = "^1.0.1"
 transformers = "^4.41.2"
 mistralai = "^0.3.0"
+pandas = "^2.2.2"
+sentencepiece = "^0.2.0"
+protobuf = "^5.27.1"
+torch = "2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
@@ -22,5 +25,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-create_dataset = "bizztune.data:main"
+create_dataset = "bizztune.dataset:main"
 benchmark = "bizztune.benchmark:main"
+create_instruction = "bizztune.instruction:main"
