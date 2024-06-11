@@ -56,7 +56,7 @@ def train_test_split(df: pd.DataFrame, test_size: float, val_size: float, seed: 
 
     return train_df, test_df, val_df
 
-def main():
+def get_instructions():
     df = load_dataset(DATA['instruction_dataset'])
     tokenizer = get_tokenizer(FINETUNE_CONFIG['base_model'])
     df = preprocess_dataset(df, FINETUNE_CONFIG['prompt'], category_dict, tokenizer)
@@ -66,8 +66,9 @@ def main():
         f"Here is the first row:\n{df['tokenized_finetune_input'][0]}\n"
     )
 
-    '''train_df, test_df, val_df = train_test_split(
+    train_df, test_df, val_df = train_test_split(
         df, FINETUNE_CONFIG['test_size'], FINETUNE_CONFIG['val_size']
     )
-    '''
+
+    return train_df, test_df, val_df
     
