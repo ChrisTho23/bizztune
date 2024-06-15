@@ -1,63 +1,57 @@
 import json
 from dotenv import load_dotenv
-from langfuse.openai import openai
 import logging
 
-from bizztune.config import DATA_CONFIG, DATA
+from bizztune.config import DATA_CONFIG
+from bizztune.dataset.utils import create_instruction_dataset
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # load environment variables
 load_dotenv()
 
-def create_instruction_dataset(model_name: str, prompt: str, seed: int):
-    try:
-        completion = openai.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": prompt},
-            ],
-            logit_bias = {1734:-100}, # prevention of \n in JSON
-            response_format= { "type" : "json_object" }, 
-            seed=seed
+class TuneSet:
+    def __init__(self, config: dict):
+        self.dataset = self._generate_dataset(
+            category_dict=config["category_dict"],
+            dataset_prompt=config["prompt"],
+            n_samples=config["n_samples"],
+            model_name=config["model_name"],
+            seed=config["seed"]
         )
-        return json.loads(completion.choices[0].message.content)
-    except Exception as e:
-        print("Unable to generate ChatCompletion response")
-        print(f"Exception: {e}")
-        return e
+    def _generate_dataset(self, category_dict: dict, dataset_prompt: str, n_samples: int, model_name: str, seed: int):
+        samples = []
 
-def main():
-    logging.info("Creating instruction dataset...")
+        for category in category_dict.keys():
+            for subcategory in category_dict[category].keys():
+                logging.info(f"Creating instruction dataset for {category} - {subcategory}")
+                prompt = dataset_prompt.format(
+                    category=category, 
+                    subcategory=subcategory,
+                    example=category_dict[category][subcategory]["example"],
+                    n_samples=n_samples
+                )
+                subcategory_dataset = create_instruction_dataset(
+                    model_name=model_name, 
+                    prompt=prompt,
+                    seed=seed
+                )
 
-    # set model
-    model_name = DATA_CONFIG['model_name']
-
-    output_path = DATA['dataset']
-    # clear output file
-    with open(output_path, 'w') as _:
+                for sample in subcategory_dataset["dataset"]:
+                    samples.append(json.dumps(sample))
+        
+    def _load_dataset_from_disk(self):
         pass
-
-    # create instruction dataset for each category and subcategory
-    for category in DATA_CONFIG['category_dict'].keys():
-        for subcategory in DATA_CONFIG['category_dict'][category].keys():
-            logging.info(f"Creating instruction dataset for {category} - {subcategory}")
-            prompt = DATA_CONFIG['prompt'].format(
-                category=category, 
-                subcategory=subcategory,
-                example=DATA_CONFIG['category_dict'][category][subcategory]["example"],
-                n_samples=DATA_CONFIG["n_samples"]
-            )
-            subcategory_dataset = create_instruction_dataset(
-                model_name=model_name, 
-                prompt=prompt,
-                seed=DATA_CONFIG['seed']
-            )
-            print(subcategory_dataset)
-
-            with open(output_path, "a") as outfile:
+    def _load_dataset_from_hf(self):
+        pass
+    def save_to_disk(self, output_path: str):
+            '''with open(output_path, "a") as outfile:
                 for example in subcategory_dataset["dataset"]:
                     json_line = json.dumps(example)
-                    outfile.write(json_line + "\n")
+                    outfile.write(json_line + "\n")'''
 
-    logging.info(f"Instruction dataset created successfully and saved at {output_path}")
+
+if __name__ == "__main__":
+    logging.info("Creating instruction dataset...")
+    config = DATA_CONFIG
+    dataset = TuneSet(config=config)
