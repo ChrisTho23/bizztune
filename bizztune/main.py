@@ -1,6 +1,6 @@
 from transformers import AutoModelForCausalLM
 from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model
-from trl import SFTTrainer, TrainingArguments
+from trl import SFTTrainer, SFTConfig, DataCollatorForCompletionOnlyLM
 from huggingface_hub import login
 import torch
 import os
@@ -43,15 +43,17 @@ def create_instruction_datasets(
                 prompt_template=prompt_template,
                 category_dict=category_dict
             )
-            completion = str(ticket["output"])
+            completion = ticket["output"]
 
-            instruction = [
-                {"role": "user", "content": prompt},
-                {"role": "assistant", "content": completion}
-            ]
-            messages["messages"].append(instruction)
+            message = {"messages": [
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": completion}
+            ]}
+            messages["messages"].append(str(message))
 
     dataset = Dataset.from_dict(messages)
+
+    print(dataset)
 
     split = dataset.train_test_split(test_size=FINETUNE_CONFIG["val_size"])
 
@@ -70,7 +72,7 @@ def get_tokenizer(model_name):
     return tokenizer
 
 def load_model_quantized(model_name):
-    bnb_config = BitsAndBytesConfig(    
+    nf4_config = BitsAndBytesConfig(    
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.bfloat16,
@@ -78,14 +80,14 @@ def load_model_quantized(model_name):
         bnb_4bit_use_double_quant=True
     )
     model_4bit = AutoModelForCausalLM.from_pretrained(
-            model=FINETUNE_CONFIG["base_model"],
-            load_in_4bit=True,
-            quantization_config=bnb_config,
-            attn_implementation="flash_attention2",
+            pretrained_model_name_or_path=model_name,
+            quantization_config=nf4_config,
+            #attn_implementation="flash_attention2", # not used for now bc of dependency conflict between lanfuse and packaging
             torch_dtype=torch.bfloat16,
             device_map="auto",
             trust_remote_code=True,
     )
+    print(f"Model: {model_4bit}")
     print(f"Device map: {model_4bit.hf_device_map}")
 
     model_4bit.config.use_cache = False # no caching of key/value pairs of attention
@@ -117,9 +119,10 @@ def config_training(model):
     return model, peft_config
 
 def get_training_arguments():
-    training_arguments = TrainingArguments(
-        output_dir="./tune/results",
-        report_to="wandb",        
+    training_arguments = SFTConfig(
+        output_dir="bizztune/tune/results",
+        report_to="wandb",   
+        dataset_text_field="messages",   
         num_train_epochs=1,
         per_device_train_batch_size=4,
         gradient_accumulation_steps=1,
@@ -139,6 +142,11 @@ def get_training_arguments():
 if __name__ == "__main__":
     input_path = DATA["dataset"]
 
+    logging.info(f"CUDA available: {torch.cuda.is_available()}")
+    logging.info(f"Number of GPUs: {torch.cuda.device_count()}")
+    for i in range(torch.cuda.device_count()):
+        logging.info(f"GPU {i}: {torch.cuda.get_device_name(i)}")
+
     logging.info("Preparing dataset...")
     train_set, val_set = create_instruction_datasets(
         input_path, 
@@ -157,16 +165,24 @@ if __name__ == "__main__":
     logging.info("Get training arguments")
     training_arguments = get_training_arguments()
 
+    collator = DataCollatorForCompletionOnlyLM(
+        instruction_template="Instruction: ",
+        response_template="\nCompletion: ",
+        tokenizer=tokenizer
+    )
+
     logging.info("Configure Trainer...")
     trainer = SFTTrainer(
         model=model_qlora,
         train_dataset=train_set,
         eval_dataset=val_set,
-        tokenizer=tokenizer,
+        #data_collator=collator,
         peft_config=peft_config,
-        max_seq_length=tokenizer.model_max_length,
         args=training_arguments,
     )
 
     logging.info("Start training...")
     trainer.train()
+    trainer.evaluate()
+
+    trainer.save_model("bizztune/tune/results/qlora_model")
