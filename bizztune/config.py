@@ -5,6 +5,7 @@ from bizztune.benchmark.prompt import benchmark_prompt_template
 from bizztune.dataset.examples import category_dict
 
 DATA_DIR = Path('data/')
+MODEL_DIR = Path('model/')
 SEED = 42
 
 DATA = {
@@ -33,7 +34,6 @@ FINETUNE_CONFIG = {
     'prompt': benchmark_prompt_template,
     'category_dict': category_dict,
     'val_size': 0.1,
-    'batch_size': 8,
     'base_model': 'mistralai/Mistral-7B-Instruct-v0.3',
-    'tuned_model': 'LSTCM'
+    'tuned_model': 'ChrisTho/bizztune_mistral_7b_instruct',
 }

@@ -24,6 +24,7 @@ peft = "^0.11.1"
 wandb = "^0.17.1"
 
 bitsandbytes = "^0.43.1"
+evaluate = "^0.4.2"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
 
