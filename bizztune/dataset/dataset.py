@@ -1,18 +1,14 @@
 import json
 from dotenv import load_dotenv
 from langfuse.openai import openai
-import asyncio
 import logging
 
 from bizztune.config import DATA_CONFIG, DATA
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # load environment variables
 load_dotenv()
-
-# set model
-model_name = DATA_CONFIG['model_name']
 
 def create_instruction_dataset(model_name: str, prompt: str, seed: int):
     try:
@@ -34,7 +30,10 @@ def create_instruction_dataset(model_name: str, prompt: str, seed: int):
 def main():
     logging.info("Creating instruction dataset...")
 
-    output_path = DATA['instruction_dataset']
+    # set model
+    model_name = DATA_CONFIG['model_name']
+
+    output_path = DATA['dataset']
     # clear output file
     with open(output_path, 'w') as _:
         pass

@@ -69,7 +69,7 @@ def create_system_prompt(prompt_template, formatted_ticket, category_dict):
 
     return prompt
 
-def format_ticket(ticket, hide_output=False):
+def format_ticket(ticket):
     formatted_text = (
         "=== Support Ticket ===\n"
         f"Title: {ticket.get('title', 'N/A')}\n"
@@ -81,7 +81,7 @@ def format_ticket(ticket, hide_output=False):
     return formatted_text
 
 def create_prompt(ticket, prompt_template, category_dict):
-    formatted_ticket = format_ticket(ticket, hide_output=True)
+    formatted_ticket = format_ticket(ticket)
     system_prompt = create_system_prompt(
         prompt_template=prompt_template,
         formatted_ticket=formatted_ticket,
