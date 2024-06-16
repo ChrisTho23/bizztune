@@ -54,5 +54,3 @@ if __name__ == '__main__':
     logging.info("Predicting...")
 
 
-    print(f"Model:\n{model}")
-

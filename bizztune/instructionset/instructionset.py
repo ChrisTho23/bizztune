@@ -6,7 +6,7 @@ from datasets import Dataset
 from langfuse.openai import openai
 from mistralai.client import MistralClient
 
-from bizztune.dataset.utils import invoke_mistral, invoke_gpt, accuracy_score
+from bizztune.instructionset.utils import invoke_mistral, invoke_gpt, accuracy_score
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -67,4 +67,8 @@ class InstructionSet:
             logging.error(f"Error calculating accuracy: {e}")
 
         return results, accuracies
+
+    def get_train_test_split(self, test_size: float):
+        split = self.instructions.train_test_split(test_size=test_size)
+        return split["train"], split["test"]
 

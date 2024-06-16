@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from bizztune.dataset.dataset_prompt import dataset_prompt_template
-from bizztune.dataset.instruction_prompt import instruction_prompt_template
-from bizztune.dataset.examples import category_dict
+from bizztune.baseset.dataset_prompt import dataset_prompt_template
+from bizztune.baseset.instruction_prompt import instruction_prompt_template
+from bizztune.baseset.examples import category_dict
 
 DATA_DIR = Path('data/')
 MODEL_DIR = Path('model/')

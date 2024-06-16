@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 import json
 from datasets import Dataset
 
-from bizztune.dataset.instructionset import InstructionSet
+from bizztune.instructionset import InstructionSet
 from bizztune.utils import load_dataset_from_disk, load_dataset_from_hf
-from bizztune.dataset.utils import create_instruction_dataset, create_prompt
+from bizztune.baseset.utils import create_instruction_dataset, create_prompt
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
