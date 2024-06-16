@@ -11,12 +11,12 @@ from bizztune.tune.utils import print_trainable_parameters
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Tuner:
-    def __init__(self, base_model, tuned_model):
+    def __init__(self, base_model: str):
         self.base_model = base_model
     
     def get_tokenizer(self):
         # load tokenizer
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name, trust_remote_control=True)
+        tokenizer = AutoTokenizer.from_pretrained(self.base_model, trust_remote_control=True)
 
         # configure tokenizer
         tokenizer.padding_side = 'right'

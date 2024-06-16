@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import json
 from datasets import Dataset
 
-from bizztune.instructionset import InstructionSet
+from bizztune.instructionset.instructionset import InstructionSet
 from bizztune.utils import load_dataset_from_disk, load_dataset_from_hf
 from bizztune.baseset.utils import create_instruction_dataset, create_prompt
 
@@ -83,7 +83,7 @@ class BaseSet:
 
         return Dataset.from_list(samples)
 
-    def get_instruction_set(self, instruction_template: str, category_dict: dict) -> "BaseSet":
+    def get_instruction_set(self, instruction_template: str, category_dict: dict) -> InstructionSet:
         logging.info("Generating instruction set from dataset...")
 
         instructions = []
