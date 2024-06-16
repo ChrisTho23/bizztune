@@ -1,28 +1,11 @@
-def accuracy_score(targets, predictions):
-    if len(targets) != len(predictions):
-        raise ValueError("List and targets must have the same length")
-    
-    if targets[0].keys() != predictions[0].keys():
-        raise ValueError(
-            f"Keys in targets ({targets[0].keys()}) and predictions ({predictions[0].keys()}) must be the same"
-        )
+import logging
+import tempfile
+import pandas as pd
+from huggingface_hub import HfApi
+import datasets
+from datasets import Dataset
 
-    if not all(isinstance(item, dict) for item in targets):
-        raise ValueError("All elements in targets must be dictionaries")
-    if not all(isinstance(item, dict) for item in predictions):
-        raise ValueError("All elements in predictions must be dictionaries")
-
-    keys = targets[0].keys()
-    position_counts = {key: 0 for key in keys}
-    total_counts = len(targets)
-
-    for target, prediction in zip(targets, predictions):
-        for key in keys:
-            if target[key] == prediction[key]:
-                position_counts[key] += 1
-
-    accuracies = {key: round(count / total_counts, 2) for key, count in position_counts.items()}
-    return accuracies
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def display_example(example, model=None, predicted_category=None, predicted_subcategory=None, predicted_urgency=None):
     input_data = example.get('input', {})
@@ -51,40 +34,41 @@ def display_example(example, model=None, predicted_category=None, predicted_subc
         print(f"{urgency_color}{model} Predicted Urgency: {predicted_urgency}\033[0m")
     print("============================\n")
 
-def create_system_prompt(prompt_template, formatted_ticket, category_dict):
-    prompt = prompt_template
+def load_dataset_from_disk(input_path: str) -> Dataset:
+    df = pd.read_csv(input_path)
+    dataset = df.to_dict(orient='records')
+    hf_dataset = Dataset.from_list(dataset)
+    return hf_dataset
 
-    prompt += "\n**Categories and subcategories**:"
-    for category, subcategories in category_dict.items():
-        prompt += f"\n**{category}**\n"
-        for subcategory in subcategories.keys():
-            prompt += f"- {subcategory}\n"
-
-    prompt += """\n**Urgency Levels**:
-    - Hoch
-    - Mittel
-    - Niedrig\n"""
-
-    prompt += f"{formatted_ticket}"
-
-    return prompt
-
-def format_ticket(ticket):
-    formatted_text = (
-        "=== Support Ticket ===\n"
-        f"Title: {ticket.get('title', 'N/A')}\n"
-        f"Description: {ticket.get('description', 'N/A')}\n"
-        f"Name: {ticket.get('user', 'N/A')}\n"
-        f"Date: {ticket.get('date', 'N/A')}\n"
+def load_dataset_from_hf(hf_dataset_name: str, hf_file_path: str) -> Dataset:
+    hf_dataset = datasets.load_dataset(
+        path=hf_dataset_name,
+        data_files=hf_file_path,
     )
+    return hf_dataset["train"]
 
-    return formatted_text
+def write_to_disk(dataset: Dataset, output_path: str):
+    logging.info("Writing dataset to disk...")
+    df = pd.DataFrame(dataset)
+    df.to_csv(output_path, index=False)
 
-def create_prompt(ticket, prompt_template, category_dict):
-    formatted_ticket = format_ticket(ticket)
-    system_prompt = create_system_prompt(
-        prompt_template=prompt_template,
-        formatted_ticket=formatted_ticket,
-        category_dict=category_dict
+def write_to_hf(
+    dataset: Dataset,
+    repo_id: str,
+    path_in_repo: str,
+    path_or_fileobj: str = None,
+    repo_type: str = "dataset"
+):
+    logging.info(f"Uploading dataset to Hugging Face repo {repo_id} at {path_in_repo}")
+    if path_or_fileobj is None:
+        with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
+            write_to_disk(dataset=Dataset, output_path=tmpfile.name)
+            path_or_fileobj = tmpfile.name
+
+    api = HfApi()
+    api.upload_file(
+        path_or_fileobj=path_or_fileobj,
+        path_in_repo=path_in_repo,
+        repo_id=repo_id,
+        repo_type=repo_type,
     )
-    return system_prompt
