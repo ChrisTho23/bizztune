@@ -1,0 +1,1 @@
+{"mistral_open-mistral-7b_accuracy": {"category": 0.7, "subcategory": 0.65, "urgency": 0.53}, "gpt_gpt-3.5-turbo_accuracy": {"category": 0.75, "subcategory": 0.72, "urgency": 0.51}, "gpt_gpt-4o_accuracy": {"category": 0.8, "subcategory": 0.83, "urgency": 0.52}, "mistral_7b_fine_tuned_accuracy": {"category": 0.73, "subcategory": 0.64, "urgency": 0.64}}
