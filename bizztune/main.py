@@ -5,6 +5,7 @@ import json
 from huggingface_hub import login
 import torch
 
+from bizztune.utils import load_tuned_model_from_hf
 from bizztune.dataset.baseset import BaseSet
 from bizztune.tune.tuner import Tuner
 from bizztune.config.config import DATA_CONFIG, FINETUNE_CONFIG, MODEL_DIR
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     train_set, val_set = instruction_set.get_train_test_split(
         val_size=FINETUNE_CONFIG["val_size"]
     )
-
+    '''
     logging.info(f"CUDA available: {torch.cuda.is_available()}")
     logging.info(f"Number of GPUs: {torch.cuda.device_count()}")
     for i in range(torch.cuda.device_count()):
@@ -60,7 +61,6 @@ if __name__ == '__main__':
         repo_id=FINETUNE_CONFIG["tuned_model"],
     )
 
-    '''
     logging.info("Evaluating instruction set...")
     results, accuracies = instruction_set.evaluate(model_to_evaluate=model)
 
@@ -74,3 +74,11 @@ if __name__ == '__main__':
     instruction_set.write_to_hf(instruction_set.instructions, repo_id="ChrisTho/bizztune", path_in_repo="instructions.jsonl")
     '''
 
+    logging.info("Loading tuned model...")
+    tuned_model = load_tuned_model_from_hf(
+        base_model=FINETUNE_CONFIG["base_model"],
+        adapter=FINETUNE_CONFIG["tuned_model"],
+    )
+
+    logging.info("Predicting...")
+    tuned_model.predict(val_set)

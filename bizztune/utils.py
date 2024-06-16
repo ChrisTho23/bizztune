@@ -4,6 +4,9 @@ import pandas as pd
 from huggingface_hub import HfApi
 import datasets
 from datasets import Dataset
+from transformers import AutoModelForCausalLM
+from peft import PeftModel
+import torch
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -44,6 +47,19 @@ def load_dataset_from_hf(hf_dataset_name: str, hf_file_path: str) -> Dataset:
         data_files=hf_file_path,
     )
     return hf_dataset["train"]
+
+def load_tuned_model_from_hf(base_model, adapter) -> PeftModel:
+    base_model_reload = AutoModelForCausalLM.from_pretrained(
+            base_model,
+            torch_dtype=torch.bfloat16,
+            return_dict=True,
+            low_cpu_mem_usage=True,
+            device_map="auto",
+            trust_remote_code=True,
+    )
+    model = PeftModel.from_pretrained(base_model_reload, adapter)
+
+    return model
 
 def write_to_disk(dataset: Dataset, output_path: str):
     logging.info("Writing dataset to disk...")
