@@ -1,5 +1,6 @@
 import logging
 from dotenv import load_dotenv
+import json
 from datasets import Dataset
 
 from bizztune.dataset.instructionset import InstructionSet
@@ -102,7 +103,7 @@ class BaseSet:
             instruction = {
                 "messages": [
                     {"role": "user", "content": prompt},
-                    {"role": "assistant", "content": str(completion)}
+                    {"role": "assistant", "content": json.dumps(completion)}
                 ]
             }   
             instructions.append(instruction)

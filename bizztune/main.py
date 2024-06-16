@@ -32,7 +32,7 @@ if __name__ == '__main__':
     results, accuracies = instruction_set.evaluate(model_to_evaluate=model)
 
     logging.info("Save results...")
-    with open('data/test_results', 'w') as file:
+    with open('data/results', 'w') as file:
         json.dump(results, file)
     with open('data/test_accuracies', 'w') as file:
         json.dump(accuracies, file)

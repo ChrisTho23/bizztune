@@ -50,7 +50,7 @@ class InstructionSet:
                 result_gpt = invoke_gpt(openai_client, messages, model)
                 results["gpt"][model].append(json.loads(result_gpt))
 
-            results["ground_truth"].append(instruction["messages"][1])
+            results["ground_truth"].append(json.loads(instruction["messages"][1]["content"]))
 
         logging.info("Calculating accuracy...")
         try:
