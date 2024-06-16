@@ -3,7 +3,7 @@ from typing import Tuple
 from datasets import Dataset
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer
 from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model
-from trl import SFTTrainer, SFTConfig
+from trl import SFTTrainer, SFTConfig, setup_chat_format
 import torch
 
 from bizztune.tune.utils import print_trainable_parameters
@@ -107,6 +107,9 @@ class Tuner:
 
         logging.info("Get quantized model")
         model_4bit = self._load_model_quantized()
+
+        logging.info("Setup chat format")
+        model_4bit, tokenizer = setup_chat_format(model_4bit, tokenizer)
 
         logging.info("Configure LoRA and apply to model")
         model_qlora, peft_config = self._config_training(model_4bit)
