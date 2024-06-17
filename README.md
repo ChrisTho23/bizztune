@@ -20,18 +20,18 @@ This project is still in progress. Below are the steps that have been completed 
     ```
 
 2. **Instruction Dataset Creation**: The database has been transformed into an instruction dataset using ChatML to perform task-specific fine-tuning.
-```
-[
-    {
-        'role': 'user',
-        'content': "You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Your task is to determine the most appropriate category and subcategory for the support ticket provided below, and also classify the urgency of the ticket.\n\nProvide the result in a JSON format with the following fields:\n- **category**: The main category of the ticket\n- **subcategory**: The subcategory of the ticket\n- **urgency**: The urgency level of the ticket\n\nThe possible categories, subcategories, and urgency levels are as follows:\n\n**Categories and subcategories**:\n**Technischer Support**\n- Geräte-Setup-Probleme\n- Softwarefehler\n\n**Abrechnung und Zahlungen**\n- Zahlungsprobleme\n- Rückerstattungsanfragen\n\n**Produktinformationen**\n- Produktspezifikationen\n- Garantieinformationen\n\n**Bestellverwaltung**\n- Bestellverfolgung\n- Lieferverzögerungen\n\n**Allgemeine Anfragen**\n- Unternehmensrichtlinien\n- Feedback und Vorschläge\n\n**Ungewiss**\n- Kein Zusammenhang\n\n**Urgency Levels**:\n    - Hoch\n    - Mittel\n    - Niedrig\n=== Support Ticket ===\nTitle: Smartphone erkennt SIM-Karte nicht\nDescription: Ich habe das neue SmartX Ultra gekauft und beim Einrichten erkennt das Smartphone meine SIM-Karte nicht. Es zeigt ständig 'Keine SIM-Karte'. Ich habe bereits verschiedene SIM-Karten ausprobiert, aber das Problem bleibt bestehen.\nName: Laura Schmidt\nDate: 2024-06-01\n"
-    }
-    {
-        'role': 'assistant',
-        'content': "{'category': 'Technischer Support', 'subcategory': 'Geräte-Setup-Probleme', 'urgency': 'Hoch'}"
-    }
-]
-```
+    ```
+    [
+        {
+            'role': 'user',
+            'content': "You are an AI model trained to categorize customer support tickets for a German consumer electronics company. Your task is to determine the most appropriate category and subcategory for the support ticket provided below, and also classify the urgency of the ticket.\n\nProvide the result in a JSON format with the following fields:\n- **category**: The main category of the ticket\n- **subcategory**: The subcategory of the ticket\n- **urgency**: The urgency level of the ticket\n\nThe possible categories, subcategories, and urgency levels are as follows:\n\n**Categories and subcategories**:\n**Technischer Support**\n- Geräte-Setup-Probleme\n- Softwarefehler\n\n**Abrechnung und Zahlungen**\n- Zahlungsprobleme\n- Rückerstattungsanfragen\n\n**Produktinformationen**\n- Produktspezifikationen\n- Garantieinformationen\n\n**Bestellverwaltung**\n- Bestellverfolgung\n- Lieferverzögerungen\n\n**Allgemeine Anfragen**\n- Unternehmensrichtlinien\n- Feedback und Vorschläge\n\n**Ungewiss**\n- Kein Zusammenhang\n\n**Urgency Levels**:\n    - Hoch\n    - Mittel\n    - Niedrig\n=== Support Ticket ===\nTitle: Smartphone erkennt SIM-Karte nicht\nDescription: Ich habe das neue SmartX Ultra gekauft und beim Einrichten erkennt das Smartphone meine SIM-Karte nicht. Es zeigt ständig 'Keine SIM-Karte'. Ich habe bereits verschiedene SIM-Karten ausprobiert, aber das Problem bleibt bestehen.\nName: Laura Schmidt\nDate: 2024-06-01\n"
+        }
+        {
+            'role': 'assistant',
+            'content': "{'category': 'Technischer Support', 'subcategory': 'Geräte-Setup-Probleme', 'urgency': 'Hoch'}"
+        }
+    ]
+    ```
 
 3. **Benchmarking Foundational Models**: The performance of state-of-the-art foundational models (OpenAI's GPT3.5, GPT4, and Mistral 7B) has been benchmarked on a hold-out set consisting of 10% of the dataset (11 samples). The results are summarized in the table below. (Please fill in the accuracy values for each model.)
 
